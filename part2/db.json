@@ -4,7 +4,7 @@
       "id": 1,
       "content": "HTML is easy",
       "date": "2019-05-30T17:30:31.098Z",
-      "important": false
+      "important": true
     },
     {
       "id": 2,
@@ -21,7 +21,7 @@
     {
       "content": "明日花キララ",
       "date": "2021-01-25T16:31:09.933Z",
-      "important": false,
+      "important": true,
       "id": 6
     }
   ]
