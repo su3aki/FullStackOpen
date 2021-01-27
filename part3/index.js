@@ -1,6 +1,11 @@
 const express = require('express')
 const app = express()
 
+
+//PostされたデータをExpressがJSONで処理する
+
+app.use(express.json())
+
 let notes = [
   {
     id: 1,
@@ -21,6 +26,15 @@ let notes = [
     important: true
   }
 ]
+
+app.post('/api/notes', (request, response) => {
+  const note = request.body
+  console.log(note)
+
+  response.json(note)
+})
+
+//app.getでバックエンドサーバーのルートを設定
 
 app.get('/', (request, response) => {
   response.send('<h1>こんにちわあああ</h1>')
@@ -47,6 +61,9 @@ app.delete('/api/notes/:id', (request, response) => {
 
   response.status(204).end()
 })
+
+
+//サーバーのポート設定
 
 const PORT = 3001
 app.listen(PORT, () => {
