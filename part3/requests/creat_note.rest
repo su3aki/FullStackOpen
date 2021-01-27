@@ -2,6 +2,6 @@ POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-  "content": "RESTclientのチェック投稿",
+  "content": "app.postのチェック改",
   "important": false
 }
