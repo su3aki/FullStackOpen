@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
-
+app.use(express.static('build'))
 //corsを使ってフロントサイドのservices/note.jsにデータを運ぶ
 app.use(cors())
 
