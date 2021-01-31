@@ -1,54 +1,18 @@
-const { request, response } = require('express')
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Note = require('./models/note')
 const cors = require('cors')
 
-//MongoDBに接続　始
-const mongoose = require('mongoose')
-const password =  process.argv[2]
-const url =
-  `mongodb+srv://KiyomaroDev:${password}@cluster0.jdqnx.mongodb.net/fsoReal?retryWrites=true&w=majority`
-
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
-  important: Boolean,
-})
-
-const Note = mongoose.model('Note', noteSchema)
-//]Mongo処理に接続　終
-
-
 app.use(express.static('build'))
+
+//PostされたデータをExpressがJSONで処理する
+app.use(express.json())
 
 //corsを使ってフロントサイドのservices/note.jsにデータを運ぶ
 app.use(cors())
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2019-05-30T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2019-05-30T19:20:14.298Z",
-    important: true
-  }
-]
 
-//PostされたデータをExpressがJSONで処理する
-app.use(express.json())
 
 app.post('/api/notes', (request, response) => {
   const note = request.body
@@ -116,15 +80,16 @@ app.delete('/api/notes/:id', (request, response) => {
 })
 
 //ルーティングエラーの記述
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
-
 app.use(unknownEndpoint)
+
 
 //サーバーのポート設定
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
