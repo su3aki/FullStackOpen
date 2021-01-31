@@ -12,15 +12,7 @@ app.use(express.json())
 //corsを使ってフロントサイドのservices/note.jsにデータを運ぶ
 app.use(cors())
 
-
-
-app.post('/api/notes', (request, response) => {
-  const note = request.body
-  console.log(note)
-
-  response.json(note)
-})
-
+//ID生成
 const generateId = () => {
   const maxId = notes.length > 0
     ? Math.max(...notes.map(n => n.id))
@@ -28,25 +20,24 @@ const generateId = () => {
   return maxId + 1
 }
 
+//MongoDBに記録
+
 app.post('/api/notes', (request, response) => {
   const body = request.body
 
-  if (!body.content) {
-    return response.status(400).json({
-      error: 'content missing'
-    })
+  if (body.content === undefined) {
+    return response.status(400).json({ error: '記述内容が存在しません' })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date(),
-    id: generateId(),
-  }
+  })
 
-  notes = notes.concat(note)
-
-  response.json(note)
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 //app.getでバックエンドサーバーのルートを設定
@@ -62,14 +53,19 @@ app.get('/api/notes', (request, response) => {
 })
 
 app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const note = notes.find(note => note.id === id)
-
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
+  Note.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({
+        error: '不正なIDです'})
+    })
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -82,7 +78,7 @@ app.delete('/api/notes/:id', (request, response) => {
 //ルーティングエラーの記述
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
+  response.status(404).send({ error: 'このURLに関連するデータが紐付けされていません' })
 }
 app.use(unknownEndpoint)
 
