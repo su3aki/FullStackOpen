@@ -1,6 +1,6 @@
-require('dotenv').config()
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const Note = require('./models/note')
 const cors = require('cors')
 
@@ -40,6 +40,7 @@ app.post('/api/notes', (request, response) => {
   })
 })
 
+
 //app.getでバックエンドサーバーのルートを設定
 
 app.get('/', (request, response) => {
@@ -54,21 +55,22 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response, next) => {
   Note.findById(request.params.id)
-    .then(note => {
-      if (note) {
-        response.json(note)
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch(error => next(error))
+  .then(note => {
+    if (note) {
+      response.json(note)
+    } else {
+      response.status(404).end()
+    }
+  })
+  .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
-
-  response.status(204).end()
+  Note.findByIdAndRemove(request.params.id)
+  .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 //ルーティングエラーの記述
@@ -76,8 +78,20 @@ app.delete('/api/notes/:id', (request, response) => {
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'このURLに関連するデータが紐付けされていません' })
 }
+
 app.use(unknownEndpoint)
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: '指定されたIDのMongoオブジェクトは存在しません' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 //サーバーのポート設定
 
