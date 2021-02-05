@@ -35,7 +35,7 @@ app.post('/api/notes', (request, response, next) => {
 })
 
 
-//app.getでバックエンドサーバーのルートを設定
+//app.getでバックエンドサーバーのルートを設定de
 
 app.get('/', (request, response) => {
   response.send('<h1>こんにちわあああ</h1>')
