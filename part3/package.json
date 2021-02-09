@@ -10,7 +10,8 @@
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,9 @@
     "mongoose": "^5.11.14"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "nodemon": "^2.0.2",
+    "prettier": "^2.2.1"
   }
 }
