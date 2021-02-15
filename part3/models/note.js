@@ -1,17 +1,5 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI
-
-console.log('次のURLに接続します', url)
-
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-  .then(result => {
-    console.log('MongoDBへの接続に成功')
-  })
-  .catch((error) => {
-    console.log('MongoDBへの接続に失敗:', error.message)
-  })
-
 const noteSchema = new mongoose.Schema({
   content: {
     type: String,
