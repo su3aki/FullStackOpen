@@ -12,8 +12,8 @@ test('palindrome of react', () => {
   expect(result).toBe('tcaer')
 })
 
-test('palindrome of releveler', () => {
-  const result = palindrome('releveler')
+test('palindrome of saippuakauppias', () => {
+  const result = palindrome('saippuakauppias')
 
-  expect(result).toBe('releveler')
+  expect(result).toBe('saippuakauppias')
 })
