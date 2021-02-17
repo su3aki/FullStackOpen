@@ -3,5 +3,6 @@ Content-Type: application/json
 
 {
   "content": "app.postのチェック改",
-  "important": false
+  "important": false,
+  "userId": "602d1fd5fefe852699466e63"
 }
