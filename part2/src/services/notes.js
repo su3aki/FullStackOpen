@@ -2,7 +2,7 @@ import axios from 'axios'
 const baseUrl = '/api/notes'
 
 let token = null
-
+//バックエンドから拾ってきたトークンを投稿にセット
 const setToken = newToken => {
   token = `bearer ${newToken}`
 }
