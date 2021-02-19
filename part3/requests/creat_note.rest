@@ -1,7 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYwMmQxZmQ1ZmVmZTg1MjY5OTQ2NmU2MyIsImlhdCI6MTYxMzYzMTk0MX0.ipb4Dw_sIvP0ANFH8ydcUtuhF2EpUG2hooY3SwS_UNs
 
 {
-  "content": "app.postのチェック改",
-  "important": false
+  "content": "token認証テスト",
+  "important": true
 }

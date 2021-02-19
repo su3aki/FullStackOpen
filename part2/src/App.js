@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import noteService from './services/notes'
+import loginService from './services/login'
+import LoginForm from './components/LoginForm'
 import './index.css'
 
   //Footer仮 </Footer>で表示
@@ -23,8 +25,11 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('')
-
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
 //ここでJsonサーバーからデータを受け取る
   useEffect(() => {
@@ -35,6 +40,15 @@ const App = () => {
       })
   }, [])
   console.log('render', notes.length, 'notes')
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
+  }, [])
 
 
   //投稿をjason DBに記録
@@ -96,11 +110,79 @@ const App = () => {
       </div>
     )
   }
+  //ログイン機構
+  const handleLogin = async (event) => {
+    event.preventDefault()
 
+    try {
+      const user = await loginService.login({
+        username, password,
+      })
+
+      window.localStorage.setItem(
+        'loggedNoteappUser', JSON.stringify(user)
+      )
+      noteService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch (exception) {
+      setErrorMessage('Wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+    console.log('logging in with', username, password)
+  }
+  //ログインフォーム
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+    //三項演算子によってボタンの出現を管理
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>ログインはここから</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>キャンセル</button>
+        </div>
+      </div>
+    )
+  }
+  //ノートフォーム
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input
+        value={newNote}
+        onChange={handleNoteChange}
+      />
+      <button type="submit">save</button>
+    </form>
+  )
+
+  //条件付きレンダリングの一貫　
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
+      {/* 条件分岐：ユーザーデータを持っていなければログインフォームを呼ぶ */}
+      {user === null ?
+      loginForm() :
+      <div>
+        <p>{user.name} logged-in</p>
+        {noteForm()}
+      </div>
+      }
+
+      <h2>Notes</h2>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? '神' : '全部' }
