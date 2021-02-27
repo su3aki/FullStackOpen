@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import NoteForm from './components/NoteForm'
@@ -40,6 +40,7 @@ const App = () => {
   //投稿をjason DBに記録
   const addNote = (noteObject) => {
     //ここで新しいノートオブジェクトを設定
+    noteFormRef.current.toggleVisibility()
     noteService
     .create(noteObject)
     .then(returnedNote => {
@@ -111,9 +112,10 @@ const Notification = ({ message }) => {
         />
     </Togglable>
   )
+  const noteFormRef = useRef()
   //ノートフォーム
   const noteForm = () => (
-    <Togglable buttonLabel='new note'>
+    <Togglable buttonLabel='new note' ref={noteFormRef}>
       <NoteForm createNote={addNote} />
     </Togglable>
   )
